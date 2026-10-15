@@ -1,0 +1,76 @@
+{
+  "llm": {
+    "gemma-4-E2B": {
+      "repo": "ggml-org/gemma-4-E2B-it-GGUF",
+      "quant": [
+        "Q8_0",
+        "Q4_K_M",
+        "Q4_0"
+      ],
+      "label": "Gemma 4 E2B (Q8_0) - lighter, for 6-8 GB GPUs or CPU"
+    },
+    "gemma-4-E4B": {
+      "repo": "ggml-org/gemma-4-E4B-it-GGUF",
+      "quant": [
+        "Q8_0",
+        "Q4_K_M"
+      ],
+      "label": "Gemma 4 E4B (Q8_0) - recommended, 10 GB+ VRAM"
+    },
+    "gemma-4-E4B-Q4": {
+      "repo": "ggml-org/gemma-4-E4B-it-GGUF",
+      "quant": [
+        "Q4_K_M",
+        "Q4_0",
+        "Q8_0"
+      ],
+      "label": "Gemma 4 E4B (Q4_K_M) - 8 GB VRAM"
+    }
+  },
+  "mmprojPreference": [
+    "f16",
+    "bf16",
+    "q8_0"
+  ],
+  "embedder": {
+    "repo": "ggml-org/embeddinggemma-2-GGUF",
+    "quant": [
+      "Q8_0",
+      "BF16",
+      "F16",
+      "F32"
+    ],
+    "label": "EmbeddingGemma 2 (740M) - search and Live Assistance"
+  },
+  "whisper": {
+    "repo": "ggerganov/whisper.cpp",
+    "models": {
+      "large-v3-turbo": "ggml-large-v3-turbo-q5_0.bin",
+      "base": "ggml-base.bin"
+    }
+  },
+  "llamaRepo": "ggml-org/llama.cpp",
+  "whisperRepo": "ggml-org/whisper.cpp",
+  "sherpa": {
+    "sensevoice": {
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2025-09-09.tar.bz2",
+      "label": "SenseVoice Small (Japanese, English, Chinese, Korean, Cantonese)",
+      "size": "~230 MB"
+    },
+    "parakeet": {
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2",
+      "label": "Parakeet TDT 0.6B v3 (25 European languages incl. English, Dutch)",
+      "size": "~640 MB"
+    },
+    "reazonspeech": {
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-zipformer-ja-reazonspeech-2024-08-01.tar.bz2",
+      "label": "ReazonSpeech Zipformer (Japanese only)",
+      "size": "~150 MB"
+    }
+  },
+  "speaker": {
+    "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-recongition-models/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx",
+    "label": "3D-Speaker CAM++ voice model (speaker labels)",
+    "size": "~28 MB"
+  }
+}

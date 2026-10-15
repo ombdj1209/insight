@@ -1,0 +1,21 @@
+appId: dev.needfit.insight
+productName: Insight
+directories:
+  buildResources: build
+  output: dist
+files:
+  - out/**
+  - package.json
+asarUnpack:
+  - "**/*.node"
+  - "node_modules/sherpa-onnx-*/**"
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: Insight-Setup-${version}.exe
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
