@@ -98,17 +98,19 @@ export function eventAt(at: number): CalEvent | undefined {
     .sort((a, b) => Math.abs(a.start - at) - Math.abs(b.start - at))[0]
 }
 
-let onTick: ((evs: CalEvent[]) => void) | null = null
-/** lets the brief scheduler run on the same 20 s clock */
+const ticks: ((evs: CalEvent[]) => void)[] = []
+/** lets the brief scheduler and team pets run on the same 20 s clock */
 export const onCalendarTick = (fn: (evs: CalEvent[]) => void): void => {
-  onTick = fn
+  ticks.push(fn)
 }
 
 function checkReminders(): void {
-  try {
-    onTick?.(upcomingEvents())
-  } catch (e) {
-    console.warn('calendar tick', e)
+  for (const fn of ticks) {
+    try {
+      fn(upcomingEvents())
+    } catch (e) {
+      console.warn('calendar tick', e)
+    }
   }
   const s = getSettings()
   if (!s.calendarSync) return

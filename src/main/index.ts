@@ -9,6 +9,7 @@ import { startCommitments } from './commitments'
 import { startCallDetection, stopCallDetection } from './detect'
 import { toggleCaptions } from './captions'
 import { startRecap } from './recap'
+import { startTeam } from './team'
 import { bootRuntime, registerIpc } from './ipc'
 import { createPet, destroyPet, registerPetIpc, togglePet } from './pet'
 import { setMainWindow } from './windows'
@@ -107,6 +108,7 @@ app.whenReady().then(() => {
   startCommitments()
   startCallDetection()
   startRecap()
+  startTeam()
 })
 
 app.on('before-quit', () => {

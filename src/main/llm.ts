@@ -67,6 +67,17 @@ function endpoint(forceLocal: boolean): Endpoint {
   }
 }
 
+/** Checks a Gemini API key with one lightweight call (lists models). Returns an error message or null. */
+export async function checkGeminiKey(key: string): Promise<string | null> {
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1', { headers: { 'x-goog-api-key': key.trim() }, signal: AbortSignal.timeout(12_000) })
+    if (res.ok) return null
+    return res.status === 400 || res.status === 401 || res.status === 403 ? 'That key was not accepted. Copy it again from AI Studio.' : `Gemini answered ${res.status}. Try again in a moment.`
+  } catch {
+    return 'Could not reach Gemini. Check your internet connection.'
+  }
+}
+
 /** Strip leaked reasoning blocks some chat templates emit inline. */
 const clean = (t: string): string =>
   t

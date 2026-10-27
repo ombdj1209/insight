@@ -6,6 +6,12 @@ directories:
 files:
   - out/**
   - package.json
+# built-in Google / Microsoft sign-in (see insight.config.example.json); skipped when the file does not exist
+extraResources:
+  - from: .
+    to: .
+    filter:
+      - insight.config.json
 asarUnpack:
   - "**/*.node"
   - "node_modules/sherpa-onnx-*/**"
@@ -14,8 +20,12 @@ win:
     - target: nsis
       arch: [x64]
   artifactName: Insight-Setup-${version}.exe
+# one click: no wizard pages, per-user (no admin prompt), opens Insight when done; the welcome wizard takes over
 nsis:
-  oneClick: false
+  oneClick: true
   perMachine: false
-  allowToChangeInstallationDirectory: true
+  runAfterFinish: true
   createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Insight
+  deleteAppDataOnUninstall: false

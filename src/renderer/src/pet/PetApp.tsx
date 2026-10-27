@@ -9,7 +9,7 @@ import { encodeWav, Vad } from '../audio/recorder'
 
 const WIN_W = 420
 const WIN_H = 460
-const FONT = '"Google Sans Flex Variable", "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif'
+export const FONT = '"Google Sans Flex Variable", "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif'
 const send = window.insight.petSend
 const rid = (): string => Math.random().toString(36).slice(2)
 const todayKey = (): string => new Date().toISOString().slice(0, 10)
@@ -726,14 +726,14 @@ export function PetApp() {
   )
 }
 
-const bubbleStyle: CSSProperties = {
+export const bubbleStyle: CSSProperties = {
   background: '#fff',
   borderRadius: 18,
   padding: '10px 14px 11px',
   boxShadow: '0 1px 3px rgba(0,0,0,.18), 0 8px 24px -8px rgba(0,0,0,.35)',
   border: '1px solid rgba(0,0,0,.06)'
 }
-const btn = (primary: boolean): CSSProperties => ({
+export const btn = (primary: boolean): CSSProperties => ({
   border: primary ? 'none' : '1.5px solid #C4C7C5',
   background: primary ? '#0B57D0' : '#fff',
   color: primary ? '#fff' : '#1F1F1F',

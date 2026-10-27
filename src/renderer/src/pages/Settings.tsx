@@ -411,7 +411,10 @@ function GoogleSection({
   const [g, setG] = useState<GoogleStatus | null>(null)
   const [busy, setBusy] = useState(false)
   const [memory, setMemory] = useState(0)
+  const [builtIn, setBuiltIn] = useState(false)
+  const [own, setOwn] = useState(!!s.googleClientId.trim())
   useEffect(() => {
+    void api.setupInfo().then((i) => setBuiltIn(i.googleBuiltIn))
     void api.googleStatus(true).then(setG)
     void api.memoryCount().then(setMemory)
   }, [])
@@ -434,6 +437,12 @@ function GoogleSection({
 
   return (
     <Section title="Google account">
+      {builtIn && (
+        <Row title={tr("Use my own Google app")} hint={tr("Advanced. Insight already has one-click Google sign-in. Turn this on only if your company requires its own OAuth client.")}>
+          <Switch checked={own} onChange={(e) => setOwn(e.target.checked)} />
+        </Row>
+      )}
+      {(!builtIn || own) && (
       <Row
         title={tr("OAuth client")}
         hint={
@@ -451,6 +460,7 @@ function GoogleSection({
           <KeyField name="googleClientSecret" saved={keys.googleClientSecret} onSaved={setKeys} placeholder={tr("Client secret")} />
         </Box>
       </Row>
+      )}
       <Row title={tr("Services")} hint={tr("Read-only. Ask looks things up live when a question needs them. Reconnect after changing services.")}>
         <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 360 }}>
           {GOOGLE_SERVICE_IDS.map((id) => {
@@ -549,7 +559,12 @@ function MicrosoftSection({ ctx, clientIdField, tenantField }: { ctx: AppCtx; cl
   const s = ctx.settings
   const [st, setSt] = useState<{ configured: boolean; connected: boolean; email?: string; actionsNeedReconnect: boolean } | null>(null)
   const [busy, setBusy] = useState(false)
-  useEffect(() => void api.msStatus().then(setSt), [])
+  const [builtIn, setBuiltIn] = useState(false)
+  const [own, setOwn] = useState(!!s.msClientId.trim())
+  useEffect(() => {
+    void api.msStatus().then(setSt)
+    void api.setupInfo().then((i) => setBuiltIn(i.msBuiltIn))
+  }, [])
   useEvent('ms:changed', setSt)
   const run = async (fn: () => Promise<typeof st>, done: string): Promise<void> => {
     setBusy(true)
@@ -564,6 +579,12 @@ function MicrosoftSection({ ctx, clientIdField, tenantField }: { ctx: AppCtx; cl
   }
   return (
     <Section title="Microsoft 365">
+      {builtIn && (
+        <Row title={tr("Use my own Microsoft app")} hint={tr("Advanced. Insight already has one-click Microsoft sign-in. Turn this on only if your company requires its own app registration.")}>
+          <Switch checked={own} onChange={(e) => setOwn(e.target.checked)} />
+        </Row>
+      )}
+      {(!builtIn || own) && (
       <Row
         title={tr("App registration")}
         hint={
@@ -581,9 +602,10 @@ function MicrosoftSection({ ctx, clientIdField, tenantField }: { ctx: AppCtx; cl
           {tenantField}
         </Box>
       </Row>
+      )}
       <Row title={st?.connected ? `Connected${st.email ? ` as ${st.email}` : ''}` : tr("Not connected")} hint={tr("Outlook mail and calendar for Ask, briefs, reminders and promises (read-only). Sign-in opens in your browser; the token is stored encrypted on this PC.")}>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="contained" disabled={busy || !s.msClientId.trim()} onClick={() => void run(api.msConnect, tr("Microsoft 365 connected"))}>
+          <Button variant="contained" disabled={busy || !st?.configured} onClick={() => void run(api.msConnect, tr("Microsoft 365 connected"))}>
             {busy ? tr("Waiting for browser…") : st?.connected ? tr("Reconnect") : tr("Connect")}
           </Button>
           {st?.connected && (

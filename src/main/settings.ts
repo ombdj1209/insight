@@ -5,7 +5,11 @@ import { readJson, writeJson } from './util'
 let current: Settings | null = null
 
 export function getSettings(): Settings {
-  if (!current) current = { ...DEFAULT_SETTINGS, ...readJson<Partial<Settings>>(paths.settingsFile(), {}) }
+  if (!current) {
+    const raw = readJson<Partial<Settings>>(paths.settingsFile(), {})
+    // installs from before the welcome wizard already went through setup
+    current = { ...DEFAULT_SETTINGS, ...raw, onboarded: raw.onboarded ?? Object.keys(raw).length > 0 }
+  }
   return current
 }
 

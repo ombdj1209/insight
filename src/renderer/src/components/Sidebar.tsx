@@ -16,6 +16,8 @@ import PetsRounded from '@mui/icons-material/PetsRounded'
 import GroupsRounded from '@mui/icons-material/GroupsRounded'
 import GroupsOutlined from '@mui/icons-material/GroupsOutlined'
 import PetsOutlined from '@mui/icons-material/PetsOutlined'
+import Diversity3Rounded from '@mui/icons-material/Diversity3Rounded'
+import Diversity3Outlined from '@mui/icons-material/Diversity3Outlined'
 import type { MeetingSummary, RuntimeStatus } from '../../../shared/types'
 import type { Route } from '../App'
 
@@ -24,6 +26,7 @@ const NAV: { page: Exclude<Route['page'], 'meeting'>; label: string; icon: React
   { page: 'knowledge', label: 'Knowledge', icon: <FolderCopyOutlined />, active: <FolderCopyRounded /> },
   { page: 'chat', label: 'Ask', icon: <ForumOutlined />, active: <ForumRounded /> },
   { page: 'people', label: 'People', icon: <GroupsOutlined />, active: <GroupsRounded /> },
+  { page: 'team', label: 'Team', icon: <Diversity3Outlined />, active: <Diversity3Rounded /> },
   { page: 'pet', label: 'Pet', icon: <PetsOutlined />, active: <PetsRounded /> },
   { page: 'settings', label: 'Settings', icon: <SettingsOutlined />, active: <SettingsRounded /> }
 ]

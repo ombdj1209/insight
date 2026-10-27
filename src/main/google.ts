@@ -4,6 +4,7 @@ import { createServer } from 'http'
 import { ACTION_SCOPES, GOOGLE_SERVICES, OAUTH_PORT, OAUTH_REDIRECT, type GoogleService } from '../shared/google'
 import { getSecret, setSecret } from './secrets'
 import { getSettings } from './settings'
+import { appConfig } from './appConfig'
 
 /**
  * Google OAuth for the Workspace MCP servers and Calendar sync.
@@ -43,7 +44,15 @@ export function actionsNeedReconnect(): boolean {
 }
 export const actionsReady = (): boolean => googleConnected() && getSettings().googleActions && !actionsNeedReconnect()
 
-export const clientConfigured = (): boolean => !!getSettings().googleClientId.trim() && !!getSecret('googleClientSecret')
+/** The user's own OAuth client wins; otherwise the client built into this copy of Insight. */
+export const googleClient = (): { id: string; secret: string } | null => {
+  const own = getSettings().googleClientId.trim()
+  if (own) return getSecret('googleClientSecret') ? { id: own, secret: getSecret('googleClientSecret') } : null
+  const b = appConfig()
+  return b.googleClientId && b.googleClientSecret ? { id: b.googleClientId, secret: b.googleClientSecret } : null
+}
+export const clientConfigured = (): boolean => !!googleClient()
+export const googleBuiltIn = (): boolean => !!appConfig().googleClientId
 
 async function tokenRequest(params: Record<string, string>): Promise<Record<string, unknown>> {
   const res = await fetch('https://oauth2.googleapis.com/token', {
@@ -75,9 +84,11 @@ export function connectGoogle(): Promise<void> {
 
 async function doConnect(): Promise<void> {
   const s = getSettings()
-  const clientId = s.googleClientId.trim()
-  const clientSecret = getSecret('googleClientSecret')
-  if (!clientId || !clientSecret) throw new Error('Enter the OAuth client ID and client secret first.')
+  void s
+  const client = googleClient()
+  if (!client) throw new Error('Google sign-in is not set up in this copy of Insight. Add your own OAuth client in Settings > Google account.')
+  const clientId = client.id
+  const clientSecret = client.secret
   if (!s.googleServices.length) throw new Error('Turn on at least one Google service.')
   const verifier = randomBytes(32).toString('base64url')
   const state = randomBytes(16).toString('hex')
@@ -147,7 +158,7 @@ export async function accessToken(): Promise<string> {
   if (t.expires_at - 60_000 > Date.now()) return t.access_token
   return (refreshing ??= (async () => {
     try {
-      const j = await tokenRequest({ grant_type: 'refresh_token', refresh_token: t.refresh_token, client_id: getSettings().googleClientId.trim(), client_secret: getSecret('googleClientSecret') })
+      const j = await tokenRequest({ grant_type: 'refresh_token', refresh_token: t.refresh_token, client_id: googleClient()?.id ?? '', client_secret: googleClient()?.secret ?? '' })
       const next = { ...t, access_token: String(j.access_token), expires_at: Date.now() + Number(j.expires_in ?? 3600) * 1000, scope: String(j.scope ?? t.scope) }
       save(next)
       return next.access_token

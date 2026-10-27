@@ -1,5 +1,6 @@
 import type { CalEvent, GoogleService, GoogleStatus, Person } from './google'
 import type { PetConfig, PetLine, PetProgress } from './pet'
+import type { TeamStatus, Visit } from './team'
 
 export type Channel = 'mic' | 'system'
 export type GpuBackend = 'cuda' | 'vulkan' | 'cpu'
@@ -74,6 +75,15 @@ export interface Settings {
   msClientId: string
   msTenant: string
   msActions: boolean
+  /** finished the first-run welcome */
+  onboarded: boolean
+  /** team pets: a folder the team syncs (OneDrive, SharePoint, Google Drive, Dropbox, network share) */
+  teamFolder: string
+  teamMemberId: string
+  /** share busy blocks (never titles) so teammates can find a time */
+  teamShareBusy: boolean
+  teamWorkStart: number
+  teamWorkEnd: number
 }
 
 /** Something someone committed to in a meeting. isMe = the user. */
@@ -330,6 +340,13 @@ export interface MainEvents {
   'runtime:changed': RuntimeStatus
   'asr:busy': { pending: number }
   'hotkey:toggle': null
+  // team pets
+  'team:changed': TeamStatus
+  /** a meeting was added outside the main window (notes shared by a teammate) */
+  'meetings:changed': null
+  /** for the visitor window: the visiting pet, its line and buttons (reply set after a button was pressed) */
+  'visitor:show': Visit
+  'visitor:motion': { state: 'walking' | 'stopped'; dir?: number }
   toast: { kind: 'info' | 'error'; message: string }
 }
 
@@ -384,5 +401,11 @@ export const DEFAULT_SETTINGS: Settings = {
   weeklyRecap: true,
   msClientId: '',
   msTenant: 'common',
-  msActions: false
+  msActions: false,
+  onboarded: false,
+  teamFolder: '',
+  teamMemberId: '',
+  teamShareBusy: true,
+  teamWorkStart: 9,
+  teamWorkEnd: 18
 }

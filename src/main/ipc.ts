@@ -9,7 +9,7 @@ import { eventAt, syncCalendar, upcomingEvents } from './calendar'
 import { setRecordingForDetect } from './detect'
 import { addSlide, deleteSlide, slideImage, slidesSourceId } from './slides'
 import { listPeople, summarizePerson } from './people'
-import { connectMicrosoft, disconnectMicrosoft, msDraft, msEvent, msStatus, msTasks } from './microsoft'
+import { connectMicrosoft, disconnectMicrosoft, msBuiltIn, msDraft, msEvent, msStatus, msTasks } from './microsoft'
 import { computeRecap } from './recap'
 import { generateBrief, getBrief } from './brief'
 import { extractCommitments, listCommitments, removeCommitmentsFor, updateCommitment } from './commitments'
@@ -17,7 +17,8 @@ import { addTasks, createDraft, createEvent } from './gactions'
 import type { CalEvent } from '../shared/google'
 import type { Commitment } from '../shared/types'
 import { ask } from './chat'
-import { connectGoogle, disconnectGoogle } from './google'
+import { connectGoogle, disconnectGoogle, googleBuiltIn } from './google'
+import { userInfo } from 'os'
 import { googleStatus, resetMcp } from './mcp'
 import { componentStatus, installComponents } from './downloader'
 import { defaultBackend, detectHardware } from './hardware'
@@ -32,11 +33,13 @@ import { createMeeting, deleteMeeting, getChat, getMeeting, listMeetings, newMes
 import { emit, uid } from './util'
 import { transcribe } from './asr'
 import { registerCaptionsIpc } from './captions'
-import { chat } from './llm'
+import { chat, checkGeminiKey } from './llm'
 import { catalog, translate } from './i18n'
 import { SUPPORTED_EXT } from './parsers'
 import { awardXp, noteMeetingDone, petConfig } from './pet'
 import { index, type SearchFilter } from './vectorIndex'
+import { book, findTime, joinTeam, leaveTeam, pingStandup, postStandup, publishCard, sendNotes, standup, teamStatus, wave } from './team'
+import { registerVisitorIpc } from './visitor'
 
 const RESTART_KEYS: (keyof Settings)[] = [
   'llmModel', 'gpuBackend', 'gpuLayers', 'contextSize', 'asrEngine', 'whisperModel', 'language', 'extraLlamaArgs', 'aiProvider'
@@ -81,7 +84,22 @@ function applySettings(patch: Partial<Settings>): Settings {
   if (changed('googleActions')) void googleStatus().then((g) => emit('google:changed', g))
   if (changed('msActions') || changed('msClientId')) emit('ms:changed', msStatus())
   if (RESTART_KEYS.some(changed) && ready()) void restartRuntime().catch(() => undefined)
+  if ((['userName', 'teamShareBusy', 'teamWorkStart', 'teamWorkEnd'] as const).some(changed)) {
+    publishCard(true)
+    emit('team:changed', teamStatus())
+  }
   return next
+}
+
+/** A friendly first name from the Windows account ("p-bharadwaj" -> "Bharadwaj", "alex.chen" -> "Alex"). */
+function suggestedName(): string {
+  try {
+    const parts = userInfo().username.split(/[._\s-]+/).filter((p) => p.length > 1 && /[a-z]/i.test(p))
+    const w = parts.length > 1 && parts[0].length <= 2 ? parts[1] : parts[0]
+    return w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : ''
+  } catch {
+    return ''
+  }
 }
 
 export function registerIpc(): void {
@@ -100,6 +118,8 @@ export function registerIpc(): void {
     return applySettings({ ...p.settings, ...gpu, sherpaThreads: Math.max(2, Math.min(8, Math.floor(hw.cores / 2))) })
   })
   h('secrets:status', () => secretStatus())
+  h('setup:info', () => ({ googleBuiltIn: googleBuiltIn(), msBuiltIn: msBuiltIn(), userName: suggestedName() }))
+  h('gemini:check', (_e, key: string) => checkGeminiKey(String(key ?? '')))
   h('secrets:set', (_e, name: UserSecret, value: string) => {
     if (!USER_SECRETS.includes(name)) throw new Error('Unknown secret')
     setSecret(name, value.trim())
@@ -207,6 +227,18 @@ export function registerIpc(): void {
   h('commitments:list', () => listCommitments())
   h('commitments:update', (_e, id: string, patch: Partial<Commitment>) => updateCommitment(id, patch))
   h('commitments:extract', (_e, meetingId: string) => extractCommitments(meetingId))
+  // team pets (a synced folder; see team.ts)
+  h('team:status', () => teamStatus())
+  h('team:join', (e) => joinTeam(BrowserWindow.fromWebContents(e.sender)))
+  h('team:leave', () => leaveTeam())
+  h('team:findTime', (_e, ids: string[], minutes: number) => findTime(Array.isArray(ids) ? ids.map(String) : [], minutes))
+  h('team:book', (_e, p: { ids: string[]; title: string; start: number; minutes: number }) => book(p))
+  h('team:sendNotes', (_e, meetingId: string, ids: string[]) => sendNotes(String(meetingId), Array.isArray(ids) ? ids.map(String) : []))
+  h('team:wave', (_e, id: string) => wave(String(id)))
+  h('team:standup', () => standup())
+  h('team:postStandup', (_e, p: { done: string[]; today: string[] }) => postStandup({ done: Array.isArray(p?.done) ? p.done : [], today: Array.isArray(p?.today) ? p.today : [] }))
+  h('team:pingStandup', () => pingStandup())
+  registerVisitorIpc()
   // Google write actions (each one confirmed in the UI first)
   h('gactions:draft', (_e, p: { to: string[]; subject: string; body: string }) => createDraft(p))
   h('gactions:tasks', (_e, items: { title: string; notes?: string; due?: string | null }[]) => addTasks(items))

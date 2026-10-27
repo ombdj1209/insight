@@ -6,6 +6,7 @@ import type {
 import type { CalEvent, GoogleStatus } from '../../shared/google'
 import type { PetConfig, PetLine, PetProgress, Topic } from '../../shared/pet'
 import type { Brief, Commitment, PersonCard, Recap, Slide } from '../../shared/types'
+import type { Busy, StandupEntry, TeamStatus, Visit } from '../../shared/team'
 
 const inv = <T,>(ch: string, ...a: unknown[]): Promise<T> => window.insight.invoke<T>(ch, ...a)
 
@@ -44,6 +45,9 @@ export const api = {
   applyPreset: (id: PresetId) => inv<Settings>('presets:apply', id),
   secretStatus: () => inv<Record<UserSecret, boolean>>('secrets:status'),
   setSecret: (name: UserSecret, value: string) => inv<Record<UserSecret, boolean>>('secrets:set', name, value),
+  setupInfo: () => inv<{ googleBuiltIn: boolean; msBuiltIn: boolean; userName: string }>('setup:info'),
+  /** null when the key works, otherwise a message for the user */
+  checkGeminiKey: (key: string) => inv<string | null>('gemini:check', key),
   renameSpeaker: (id: string, speakerId: string, name: string) => inv<Meeting>('meetings:renameSpeaker', id, speakerId, name),
   followUp: (id: string, language: string, tone: 'formal' | 'friendly') => inv<string>('meetings:followup', id, language, tone),
   i18nCatalog: (lang: string) => inv<Record<string, string>>('i18n:catalog', lang),
@@ -104,8 +108,22 @@ export const api = {
   extractCommitments: (meetingId: string) => inv<Commitment[]>('commitments:extract', meetingId),
   gDraft: (p: { to: string[]; subject: string; body: string }) => inv<{ url: string }>('gactions:draft', p),
   gTasks: (items: { title: string; notes?: string; due?: string | null }[]) => inv<{ added: number; url: string }>('gactions:tasks', items),
-  gEvent: (p: { title: string; start: number; minutes: number; attendees: string[]; description?: string; meet: boolean }) => inv<{ url: string }>('gactions:event', p)
+  gEvent: (p: { title: string; start: number; minutes: number; attendees: string[]; description?: string; meet: boolean }) => inv<{ url: string }>('gactions:event', p),
+  // team pets
+  teamStatus: () => inv<TeamStatus>('team:status'),
+  teamJoin: () => inv<TeamStatus>('team:join'),
+  teamLeave: () => inv<TeamStatus>('team:leave'),
+  teamFindTime: (ids: string[], minutes: number) => inv<Busy[]>('team:findTime', ids, minutes),
+  teamBook: (p: { ids: string[]; title: string; start: number; minutes: number }) => inv<{ via: TeamStatus['booking']; url?: string }>('team:book', p),
+  teamSendNotes: (meetingId: string, ids: string[]) => inv<number>('team:sendNotes', meetingId, ids),
+  teamWave: (id: string) => inv<void>('team:wave', id),
+  teamStandup: () => inv<Standup>('team:standup'),
+  teamPostStandup: (p: { done: string[]; today: string[] }) => inv<Standup>('team:postStandup', p),
+  teamPingStandup: () => inv<number>('team:pingStandup'),
+  visitorGet: () => inv<{ visit: Visit | null; pet: Visit['pet']; dir: number } | null>('visitor:get'),
+  visitorAct: (actionId: string) => inv<void>('visitor:act', actionId)
 }
+export type Standup = { date: string; suggestion: { done: string[]; today: string[] }; entries: StandupEntry[] }
 
 export const cleanError = (e: unknown): string => String((e as Error)?.message ?? e).replace(/^Error invoking remote method '[^']+': (Error: )?/, '')
 

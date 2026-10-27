@@ -4,3 +4,6 @@ dist
 *.log
 models
 *.tsbuildinfo
+.env
+.env.*
+insight.config.json

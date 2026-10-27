@@ -18,6 +18,7 @@ import { SetupPage } from './pages/Setup'
 import { joinAndListen, ReminderBanner } from './components/Upcoming'
 import { PetPage } from './pages/PetPage'
 import { PeoplePage } from './pages/PeoplePage'
+import { TeamPage } from './pages/TeamPage'
 import { BriefDialog, briefKeyOf } from './components/Brief'
 import { RecapDialog } from './components/Recap'
 import type { CalEvent } from '../../shared/google'
@@ -31,7 +32,7 @@ const rtlCache = createCache({ key: 'muirtl', stylisPlugins: [rtlPlugin] })
 const ltrCache = createCache({ key: 'css' })
 
 export type Route =
-  | { page: 'home' | 'knowledge' | 'chat' | 'settings' | 'setup' | 'pet' | 'people'; meetingId?: undefined }
+  | { page: 'home' | 'knowledge' | 'chat' | 'settings' | 'setup' | 'pet' | 'people' | 'team'; meetingId?: undefined }
   | { page: 'meeting'; meetingId: string }
 
 export interface AppCtx {
@@ -90,7 +91,10 @@ export function App() {
 
   const refreshMeetings = useCallback(() => void api.meetings().then(setMeetings), [])
   useEffect(() => {
-    void api.getSettings().then(setSettings)
+    void api.getSettings().then((s) => {
+      setSettings(s)
+      if (!s.onboarded) setRoute({ page: 'setup' }) // first run: the welcome wizard
+    })
     void api.components().then((c) => {
       setComponents(c)
       if (c.some((x) => x.required && !x.installed)) setRoute({ page: 'setup' })
@@ -112,6 +116,7 @@ export function App() {
 
   useEvent('components:changed', setComponents)
   useEvent('runtime:changed', setRuntime)
+  useEvent('meetings:changed', refreshMeetings)
   useEvent('toast', (t) => setSnack({ message: t.message, kind: t.kind }))
   const ctxRef = useRef<AppCtx | null>(null)
   const [briefEvent, setBriefEvent] = useState<CalEvent | null>(null)
@@ -128,7 +133,7 @@ export function App() {
           if (e) setBriefEvent(e)
         })
       } else if (c.page === 'meeting' && c.meetingId) setRoute({ page: 'meeting', meetingId: c.meetingId })
-      else if (['home', 'knowledge', 'chat', 'settings', 'setup', 'pet', 'people'].includes(c.page)) setRoute({ page: c.page as 'home' })
+      else if (['home', 'knowledge', 'chat', 'settings', 'setup', 'pet', 'people', 'team'].includes(c.page)) setRoute({ page: c.page as 'home' })
     }
     if (c.cmd === 'joinNotes' && ctxRef.current) void joinAndListen(ctxRef.current, c.event)
     if (c.cmd === 'listen' && !recorder.state.recording) void startRef.current()
@@ -244,6 +249,7 @@ export function App() {
               {route.page === 'settings' && <SettingsPage ctx={ctx} runtime={runtime} />}
               {route.page === 'pet' && <PetPage ctx={ctx} />}
               {route.page === 'people' && <PeoplePage ctx={ctx} />}
+              {route.page === 'team' && <TeamPage ctx={ctx} />}
               {route.page === 'setup' && <SetupPage ctx={ctx} components={components} runtime={runtime} />}
             </PageFade>
           </Box>

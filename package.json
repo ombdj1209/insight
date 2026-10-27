@@ -1,7 +1,7 @@
 {
   "name": "insight-windows",
   "productName": "Insight",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Insight: a private, on-device meeting companion for Windows. Live transcription in 53 languages, AI notes, promise tracking, cited answers from your files, live captions with translation, Google and Microsoft 365 integration, and a desktop pet.",
   "main": "./out/main/index.js",
   "author": "Om Prakash Bharadwaj",

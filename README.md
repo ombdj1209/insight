@@ -1,5 +1,7 @@
 # Insight for Windows
 
+**[Website](https://ombdj1209.github.io/insight/) · [Download the installer](https://github.com/ombdj1209/insight/releases/latest)**
+
 **Your meetings, understood.** Insight is a private, on-device meeting companion for Windows. It listens to your
 microphone and everything your PC plays (Teams, Zoom, Meet, Webex in a browser or app, or the people across the table),
 transcribes in 53 languages, turns your shorthand into clear notes, tracks who promised what, and answers questions

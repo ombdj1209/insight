@@ -96,6 +96,8 @@ export function awardBadge(id: string): void {
 }
 
 // ---------- visibility ----------
+/** Where the pet window is (for visiting pets to walk up to). */
+export const petBounds = (): { x: number; y: number; w: number; h: number } | null => (petVisible() ? { x: pos.x, y: pos.y, w: W, h: H } : null)
 export const petVisible = (): boolean => !!win && !win.isDestroyed() && win.isVisible()
 function applyVisibility(): void {
   if (!win || win.isDestroyed()) return

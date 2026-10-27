@@ -6,6 +6,7 @@ import { joinUrlOf } from '../shared/google'
 import type { ToolDef } from './llm'
 import { getSecret, setSecret } from './secrets'
 import { getSettings } from './settings'
+import { appConfig } from './appConfig'
 
 /**
  * Microsoft 365 (Outlook mail and calendar, To Do, Teams) through Microsoft Graph.
@@ -33,7 +34,10 @@ const load = (): Token | null => {
   }
 }
 const save = (t: Token | null): void => setSecret('msToken', t ? JSON.stringify(t) : '')
-const authority = (): string => `https://login.microsoftonline.com/${encodeURIComponent(getSettings().msTenant || 'common')}/oauth2/v2.0`
+// the user's own app registration wins; otherwise the one built into this copy of Insight
+const msClientId = (): string => getSettings().msClientId.trim() || appConfig().msClientId || ''
+export const msBuiltIn = (): boolean => !!appConfig().msClientId
+const authority = (): string => `https://login.microsoftonline.com/${encodeURIComponent((getSettings().msClientId.trim() ? getSettings().msTenant : appConfig().msTenant) || 'common')}/oauth2/v2.0`
 
 export const msConnected = (): boolean => !!load()?.refresh_token
 export const msEmail = (): string | undefined => load()?.email
@@ -43,7 +47,7 @@ export const msActionsNeedReconnect = (): boolean => {
 }
 export const msActionsReady = (): boolean => msConnected() && getSettings().msActions && !msActionsNeedReconnect()
 export const msStatus = (): { configured: boolean; connected: boolean; email?: string; actionsNeedReconnect: boolean } => ({
-  configured: !!getSettings().msClientId.trim(),
+  configured: !!msClientId(),
   connected: msConnected(),
   email: msEmail(),
   actionsNeedReconnect: msConnected() && msActionsNeedReconnect()
@@ -60,8 +64,8 @@ let signingIn: Promise<void> | null = null
 export const connectMicrosoft = (): Promise<void> => (signingIn ??= doConnect().finally(() => (signingIn = null)))
 
 async function doConnect(): Promise<void> {
-  const clientId = getSettings().msClientId.trim()
-  if (!clientId) throw new Error('Enter the Application (client) ID of your Microsoft app registration first.')
+  const clientId = msClientId()
+  if (!clientId) throw new Error('Microsoft sign-in is not set up in this copy of Insight. Add your own app registration in Settings > Microsoft 365.')
   const scopes = [...READ, ...(getSettings().msActions ? WRITE : [])].join(' ')
   const verifier = randomBytes(32).toString('base64url')
   const state = randomBytes(16).toString('hex')
@@ -122,7 +126,7 @@ async function accessToken(): Promise<string> {
   if (t.expires_at - 60_000 > Date.now()) return t.access_token
   return (refreshing ??= (async () => {
     try {
-      const j = await tokenRequest({ client_id: getSettings().msClientId.trim(), grant_type: 'refresh_token', refresh_token: t.refresh_token, scope: t.scope })
+      const j = await tokenRequest({ client_id: msClientId(), grant_type: 'refresh_token', refresh_token: t.refresh_token, scope: t.scope })
       const next = { ...t, access_token: String(j.access_token), refresh_token: String(j.refresh_token ?? t.refresh_token), expires_at: Date.now() + Number(j.expires_in ?? 3600) * 1000, scope: String(j.scope ?? t.scope) }
       save(next)
       return next.access_token
