@@ -91,7 +91,7 @@ function applySettings(patch: Partial<Settings>): Settings {
   return next
 }
 
-/** A friendly first name from the Windows account ("p-bharadwaj" -> "Bharadwaj", "alex.chen" -> "Alex"). */
+/** A friendly first name from the Windows account ("k-tanaka" -> "Tanaka", "alex.chen" -> "Alex"). */
 function suggestedName(): string {
   try {
     const parts = userInfo().username.split(/[._\s-]+/).filter((p) => p.length > 1 && /[a-z]/i.test(p))

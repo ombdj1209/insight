@@ -1,6 +1,6 @@
 # Insight for Windows
 
-**[Website](https://ombdj1209.github.io/insight/) · [Download the installer](https://github.com/ombdj1209/insight/releases/latest)**
+**[Download for Windows](https://github.com/ombdj1209/insight/releases/latest/download/Insight-Setup-0.5.0.exe) · [Website](https://ombdj1209.github.io/insight/) · [All releases](https://github.com/ombdj1209/insight/releases)**
 
 **Your meetings, understood.** Insight is a private, on-device meeting companion for Windows. It listens to your
 microphone and everything your PC plays (Teams, Zoom, Meet, Webex in a browser or app, or the people across the table),
@@ -9,6 +9,33 @@ from your own files and meetings with exact citations, during the meeting and af
 
 No bot joins your call. Speech recognition and search run on your PC, and with the local AI model nothing leaves it
 after the one-time model download. Cloud AI and Google / Microsoft accounts are optional.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site/assets/dark-notes.webp">
+  <img src="site/assets/light-notes.webp" alt="Insight: enhanced notes for the Q4 launch plan meeting, with Live Assistance answering a churn question from a spreadsheet">
+</picture>
+
+<p align="center">
+  <a href="https://ombdj1209.github.io/insight/#film"><img src="site/assets/film-poster.jpg" width="560" alt="Watch the Insight launch film (3:12)"></a><br>
+  <sub><a href="https://ombdj1209.github.io/insight/#film">▶ Watch the launch film (3:12)</a></sub>
+</p>
+
+## Screens
+
+<table>
+  <tr>
+    <td width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="site/assets/dark-transcript.webp"><img src="site/assets/light-transcript.webp" alt="Live transcript with named speakers and Live Assistance"></picture><br><b>Live transcript.</b> Every voice, with speakers told apart, and answers from your files while people talk.</td>
+    <td width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="site/assets/dark-reminder.webp"><img src="site/assets/light-reminder.webp" alt="Home with a meeting reminder and Join buttons"></picture><br><b>Reminders with Join.</b> Join, or Join + notes to start listening in the same click.</td>
+  </tr>
+  <tr>
+    <td><picture><source media="(prefers-color-scheme: dark)" srcset="site/assets/dark-ask.webp"><img src="site/assets/light-ask.webp" alt="Ask answering a question with citations"></picture><br><b>Ask.</b> Questions across your files and every meeting, with citations that open the source.</td>
+    <td><picture><source media="(prefers-color-scheme: dark)" srcset="site/assets/dark-knowledge.webp"><img src="site/assets/light-knowledge.webp" alt="Knowledge page with indexed folders"></picture><br><b>Knowledge.</b> Point it at folders, calendars and bookmarks; everything is indexed on your PC.</td>
+  </tr>
+  <tr>
+    <td><img src="site/assets/promises.webp" alt="Promises from a meeting with owners and due dates"><br><b>Promises.</b> Who promised what, by when, decided from the speaker labels.</td>
+    <td><picture><source media="(prefers-color-scheme: dark)" srcset="site/assets/dark-petpage.webp"><img src="site/assets/light-petpage.webp" alt="Pet page with species, colours and moods"></picture><br><b>Your pet.</b> Species, colours, patterns, hats and moods.</td>
+  </tr>
+</table>
 
 ## Features
 
@@ -49,15 +76,65 @@ after the one-time model download. Cloud AI and Google / Microsoft accounts are 
 - **Weekly recap** on Friday afternoon: time in meetings, talk share, promises kept, meetings that could have been an
   email, and a shareable card.
 
-**Desktop pet**
-- A customizable companion (species, colours, patterns, accessories, voice, personality) that lives on your desktop,
-  reminds you about meetings, offers to take notes when a call starts, answers questions by voice (Ctrl+Shift+K),
-  levels up with use and earns badges that unlock items. Click-through everywhere except the pet itself; hides in
-  full-screen apps.
+**Desktop pet and team pets**
+- A pet that lives on your desktop and team pets that visit your teammates. See [Meet Pip](#meet-pip-your-desktop-pet).
 
 **Multilingual**
 - 53 meeting languages; the interface, pet, notes, emails, translations and captions in 39 written languages,
   right-to-left included (Arabic, Hebrew, Persian, Urdu). Settings → App → Interface language (Auto follows Windows).
+
+## Meet Pip, your desktop pet
+
+<p align="center"><img src="docs/images/pet-species.svg" alt="The ten species: blob, cat, fox, bunny, bear, axolotl, robot, ghost, dragon and penguin"></p>
+
+Pip sits on top of your other windows, in a transparent window shaped like the pet itself, so clicks and file drags
+pass through everywhere else. Pick a species, colour, accent, pattern, eyes, hat, face and neck item on the **Pet** page.
+
+<table>
+  <tr>
+    <td align="center" width="40%"><img src="docs/images/pet-reminder.png" width="300" alt="Pip: Design review starts in 5 min, with Join, Join + notes and Later buttons"></td>
+    <td><b>Meetings, on time.</b> Pip tells you when a meeting is about to start, with <b>Join</b> and <b>Join + notes</b>.
+    It brings the pre-meeting brief, offers to take notes when Zoom, Teams, Meet, Webex or Slack starts using your
+    microphone, and when you hang up offers to write the notes.</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/pet-listening.png" width="300" alt="Pip with headphones: Taking notes. You just look smart."></td>
+    <td><b>Moods that mean something.</b> Headphones while you are recording, a notepad while notes are written,
+    sleepy after a quiet stretch, a little stressed on back-to-back days, and a dance when your notes are ready.
+    It nudges you before a promise is due (Done / Tomorrow / Open).</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/pet-petted.png" width="170" alt="Pip with hearts: More please!"></td>
+    <td><b>Play with it.</b> Rub it to pet it (hearts), drag it, throw it and watch it bounce off the screen edge with
+    gravity on. Click for a fun fact or joke, double-click to open Ask, right-click for the menu (captions, wander,
+    gravity, sounds, shoo for an hour).</td>
+  </tr>
+</table>
+
+<p align="center"><img src="docs/images/pet-moods.svg" alt="Pip's moods: idle, happy, excited, in a meeting, writing notes, sleepy, party and carried"></p>
+
+| | |
+|---|---|
+| **Feed it files** | Drop a file or folder on Pip and Insight indexes it for Ask. |
+| **Ask by voice** | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> from any app; Pip answers from your files and meetings. |
+| **Show or hide** | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>. It also hides by itself during full-screen slides, videos and games. |
+| **Grows with you** | Earns XP from meetings, notes, petting and feeding; levels and badges unlock new items. |
+| **Your language** | Speaks any of the 39 interface languages, sassy or wholesome, with quiet hours and optional AI-written lines. |
+
+### Team pets (new in 0.5)
+
+Everyone on a team picks the same folder they already sync (OneDrive, SharePoint, Google Drive for desktop, Dropbox or
+a network share) on the **Team** page. Your pet can then walk over to a teammate's screen:
+
+- **Wave.** Their pet visits with a hello; they can wave back.
+- **Find time.** Insight finds slots that fit everyone's working hours, time zones and calendars, then books it in
+  Google Calendar or Outlook (with "Allow actions" on) or sends an invite file.
+- **Send notes.** Hand over a meeting's notes; the teammate chooses whether to save it to their meetings.
+- **Stand-up.** A daily stand-up pre-filled from your promises (done since yesterday, due today); post it and ping
+  whoever has not posted yet.
+
+Teammates see your name, email, pet, time zone, work hours and busy times (start and end only, never titles). There is
+no Insight server: only small files in a hidden `.insight-team` folder, moved by your sync app.
 
 ## Requirements
 
