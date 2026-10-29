@@ -1,0 +1,24 @@
+name = "insight-download"
+main = "index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# the website origins allowed to sign people up (first one is used in emails)
+SITE_ORIGINS = "https://ombdj1209.github.io,http://localhost:5173"
+MAIL_FROM = "Insight <hello@YOUR-DOMAIN>"
+INSTALLER_KEY = "Insight-Setup-0.5.0.exe"
+
+# npx wrangler kv namespace create DB  -> paste the id
+[[kv_namespaces]]
+binding = "DB"
+id = "PASTE_KV_ID"
+
+# npx wrangler r2 bucket create insight-installers
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "insight-installers"
+
+# Secrets (never in this file):
+#   npx wrangler secret put RESEND_API_KEY
+#   npx wrangler secret put LINK_SECRET        (any random string, 32+ characters)
+#   npx wrangler secret put TURNSTILE_SECRET   (optional, recommended)

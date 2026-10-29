@@ -1,6 +1,6 @@
 # Insight for Windows
 
-**[Download for Windows](https://github.com/ombdj1209/insight/releases/latest/download/Insight-Setup-0.5.0.exe) · [Website](https://ombdj1209.github.io/insight/) · [All releases](https://github.com/ombdj1209/insight/releases)**
+**[Download for Windows](https://ombdj1209.github.io/insight/#get) · [Website](https://ombdj1209.github.io/insight/)**
 
 **Your meetings, understood.** Insight is a private, on-device meeting companion for Windows. It listens to your
 microphone and everything your PC plays (Teams, Zoom, Meet, Webex in a browser or app, or the people across the table),
